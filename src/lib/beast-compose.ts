@@ -1,3 +1,5 @@
+import { Config, Cmd, Dispatch } from './beast';
+
 export function mapEffect<MsgIn, MsgOut>(
   effect: Cmd<MsgIn> | undefined,
   map: (msg: MsgIn | undefined) => MsgOut
@@ -39,15 +41,6 @@ export function batchPrograms<Model, Msg>(
   const models: Model[] = [];
   const effects: Cmd<Msg>[] = [];
   const programCount = programs.length;
-  // for (let i = 0; i < programCount; i++) {
-  //   const index = i;
-  //   const program = programs[index];
-
-  //   const embed = mapProgram(program, (data: any) => ({ index, data }));
-  //   embeds.push(embed);
-  //   models.push(embed.init[0]);
-  //   effects.push(embed.init[1]);
-  // }
 
   programs.map((program, index) => {
     const embed = mapProgram(program, (data: any) => ({ index, data }));
@@ -75,12 +68,6 @@ export function batchPrograms<Model, Msg>(
   }
 
   function done(model: Model) {
-    // for (let i = 0; i < programCount; i++) {
-    //   const done = embeds[i].done;
-    //   if (done) {
-    //     done(model[i]);
-    //   }
-    // }
     programs.map(program => {
       const done = program.done;
       if (done) {

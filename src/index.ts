@@ -1,5 +1,5 @@
 import { html, render } from 'lit-html/lib/lit-extended';
-import { litProgram } from './lib/beast-lit-html';
+import { program, Dispatch } from './lib/beast';
 
 type Model = {
   readonly counter: number;
@@ -40,4 +40,5 @@ const CounterProgram = {
       </div>`
 };
 
-litProgram(CounterProgram, document.getElementById('app') as HTMLElement);
+let container = document.getElementById('app') as Element;
+program(CounterProgram, render, container);

@@ -1,24 +1,23 @@
 export type Dispatch<Msg> = (msg: Msg) => void;
-export type Sub<Msg> = (emit: Dispatch<Msg>) => void;
-export type Cmd<Msg> = Sub<Msg>;
-export type Done<Model> = (model: Model) => void;
+export type Cmd<Msg> = (emit: Dispatch<Msg>) => void;
+export type Shutdown<Model> = (model: Model) => void;
 
 export type Config<Model, Msg> = {
   init(): UpdateResult<Model, Msg>;
   subscriptions?: Cmd<Msg>;
   update(model: Model, msg: Msg): UpdateResult<Model, Msg>;
   view(model: Model, emit: Dispatch<Msg>): any;
-  done?: Done<Model>;
+  shutdown?: Shutdown<Model>;
 };
 
 export type UpdateResult<Model, Msg> = Model | [Model, Cmd<Msg>];
 
-export const program = <Model, Msg>(
+export function program<Model, Msg>(
   config: Config<Model, Msg>,
   render?: any,
   container?: Element
-) => {
-  const { init, subscriptions, update, view, done } = config;
+) {
+  const { init, subscriptions, update, view, shutdown } = config;
 
   let model: any = null;
   let isRunning = true;
@@ -39,7 +38,7 @@ export const program = <Model, Msg>(
     render ? render(view(model, emit), container) : view(model, emit);
   }
 
-  return function end() {
-    isRunning ? (isRunning = false) : done ? done(model) : null;
+  return function kill() {
+    isRunning ? (isRunning = false) : shutdown ? shutdown(model) : null;
   };
-};
+}
